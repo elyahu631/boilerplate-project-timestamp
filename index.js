@@ -24,7 +24,27 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/:date?", function (req, res) {
+  let dateInput = req.params.date;
 
+  // Check if dateInput is undefined, return current date
+  if (!dateInput) {
+    dateInput = new Date();
+  } else {
+    // Check if dateInput is a number (Unix timestamp)
+    if (!isNaN(dateInput)) {
+      dateInput = parseInt(dateInput);
+    }
+    dateInput = new Date(dateInput);
+  }
+
+  // Check for invalid date
+  if (dateInput.toString() === "Invalid Date") {
+    res.json({ error: "Invalid Date" });
+  } else {
+    res.json({ unix: dateInput.getTime(), utc: dateInput.toUTCString() });
+  }
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
